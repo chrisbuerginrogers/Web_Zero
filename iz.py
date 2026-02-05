@@ -169,35 +169,21 @@ from time import sleep
 
 class CEEO_Channel():
     def __init__(self, channel, user, project):
-        self.filter = None
         self.value = 0
         self.reply = ''
         self.callback = None
-        self.color = 'green'
 
-        self.url = ''
+        self.url = f"wss://{self.user}.pyscriptapps.com/{self.project}/api/channels/{self.channel}"
         self.socket = None
+        self._web_socket = None
         self.is_connected = False
         self.reconnect_attempts = 0
         self.max_reconnect_attempts = 5
         self.reconnect_delay = 2
 
-        self.channel, self.user, self.project = channel, user, project
-
-    def connect_disconnect(self, event):   
-        if self.c_btn.innerText == 'connect':
-            self.setupSocket()
-            self.c_btn.innerText = 'disconnect'
-        else:
-            self.c_btn.innerText = 'connect'
-            self.close()
-
-    def setupSocket(self):
-        self.url = f"wss://{self.user}.pyscriptapps.com/{self.project}/api/channels/{self.channel}"
-        print(self.url)
-        self.is_connected = False
-        self._web_socket = None
-        self.connect()
+        self.channel = channel
+        self.user = user
+        self.project = project
         
     async def onmessage(self, event):
         try:
