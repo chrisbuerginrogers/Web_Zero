@@ -1,0 +1,308 @@
+/* ==========================================================
+   FilmFinder — Playful Brutalist Style
+   Cinematic palette, bold type, mixing-desk sliders.
+   Light/dark mode via prefers-colour-scheme.
+
+   Created by Claude from promting by Nicholas.
+   ========================================================== */
+
+/* --- Google Fonts import --------------------------------- */
+@import url(
+  'https://fonts.googleapis.com/css2?'
+  'family=Playfair+Display:wght@700;900&'
+  'family=Source+Sans+3:wght@400;600&'
+  'display=swap'
+);
+
+/* --- Design tokens (light mode defaults) ----------------- */
+:root {
+  --bg:              #f5f0e8;
+  --bg-card:         #ede8dc;
+  --text:            #1a1a2e;
+  --text-secondary:  #4a4a6a;
+  --accent:          #d4a017;
+  --accent-hover:    #b8860b;
+  --accent-text:     #1a1a2e;
+  --border:          #1a1a2e;
+  --hr:              #1a1a2e;
+  --thumb-shadow:    rgba(0, 0, 0, 0.35);
+  --track-bg:        #c8c3b5;
+
+  --font-heading:    'Playfair Display', Georgia, serif;
+  --font-body:       'Source Sans 3', 'Segoe UI', sans-serif;
+
+  --max-width:       720px;
+  --radius:          6px;
+  --border-width:    3px;
+}
+
+/* --- Dark mode overrides --------------------------------- */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg:              #0f0f1a;
+    --bg-card:         #1a1a2e;
+    --text:            #f0ebe0;
+    --text-secondary:  #a8a3b5;
+    --accent:          #d4a017;
+    --accent-hover:    #e6b82a;
+    --accent-text:     #0f0f1a;
+    --border:          #d4a017;
+    --hr:              #d4a017;
+    --thumb-shadow:    rgba(0, 0, 0, 0.6);
+    --track-bg:        #2e2e45;
+  }
+}
+
+/* --- Reset & base ---------------------------------------- */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin:    0;
+  padding:   0;
+}
+
+body {
+  font-family:      var(--font-body);
+  background-color: var(--bg);
+  color:            var(--text);
+  min-height:       100vh;
+  padding:          2rem 1rem;
+  line-height:      1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* --- Centred container ----------------------------------- */
+#iz {
+  max-width: var(--max-width);
+  margin:    0 auto;
+}
+
+/* --- Headings -------------------------------------------- */
+h1 {
+  font-family: var(--font-heading);
+  font-size:   clamp(2.2rem, 6vw, 3.2rem);
+  font-weight: 900;
+  line-height: 1.1;
+  margin-bottom: 0.6rem;
+  letter-spacing: -0.02em;
+}
+
+h2 {
+  font-family: var(--font-heading);
+  font-size:   clamp(1.4rem, 3.5vw, 1.8rem);
+  font-weight: 700;
+  margin-bottom: 0.4rem;
+}
+
+/* --- Intro text ------------------------------------------ */
+#iz > div:first-child p {
+  color:       var(--text-secondary);
+  font-size:   1.05rem;
+  margin-bottom: 0.3rem;
+}
+
+/* --- Slider rows (the "mixing desk") --------------------- */
+/* Each slider + label lives in its own div. */
+#iz > div:has(input[type="range"]) {
+  display:        flex;
+  align-items:    center;
+  gap:            1rem;
+  margin-bottom:  0.9rem;
+}
+
+/* Label comes after the input in the HTML but we want it
+   first visually; flex order handles this cleanly. */
+label {
+  order:          -1;
+  min-width:      140px;
+  font-weight:    600;
+  font-size:      0.95rem;
+  white-space:    nowrap;
+  color:          var(--text);
+}
+
+/* --- Range input (cross-browser) ------------------------- */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance:         none;
+  flex:               1;
+  height:             8px;
+  border-radius:      4px;
+  background:         var(--track-bg);
+  outline:            none;
+  cursor:             pointer;
+  /* Smooth value-fill via a gradient that updates with JS-
+     free CSS; browsers honour the progress pseudo-element
+     or we use a fallback solid track. */
+}
+
+/* Firefox track. */
+input[type="range"]::-moz-range-track {
+  height:        8px;
+  border-radius: 4px;
+  background:    var(--track-bg);
+}
+
+/* Webkit/Chrome/Safari thumb. */
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance:         none;
+  width:              26px;
+  height:             26px;
+  border-radius:      50%;
+  background:         var(--accent);
+  border:             var(--border-width) solid var(--border);
+  box-shadow:         0 2px 6px var(--thumb-shadow);
+  cursor:             grab;
+  transition:         transform 0.15s ease,
+                      box-shadow 0.15s ease;
+}
+
+input[type="range"]::-webkit-slider-thumb:active {
+  cursor:     grabbing;
+  transform:  scale(1.15);
+  box-shadow: 0 3px 10px var(--thumb-shadow);
+}
+
+/* Firefox thumb. */
+input[type="range"]::-moz-range-thumb {
+  width:        26px;
+  height:       26px;
+  border-radius: 50%;
+  background:   var(--accent);
+  border:       var(--border-width) solid var(--border);
+  box-shadow:   0 2px 6px var(--thumb-shadow);
+  cursor:       grab;
+  transition:   transform 0.15s ease,
+                box-shadow 0.15s ease;
+}
+
+input[type="range"]::-moz-range-thumb:active {
+  cursor:     grabbing;
+  transform:  scale(1.15);
+  box-shadow: 0 3px 10px var(--thumb-shadow);
+}
+
+/* Focus ring for keyboard users. */
+input[type="range"]:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* --- Buttons --------------------------------------------- */
+button {
+  font-family:    var(--font-body);
+  font-size:      1.1rem;
+  font-weight:    600;
+  color:          var(--accent-text);
+  background:     var(--accent);
+  border:         var(--border-width) solid var(--border);
+  border-radius:  var(--radius);
+  padding:        0.7rem 1.8rem;
+  cursor:         pointer;
+  margin-top:     1rem;
+  transition:     background 0.15s ease,
+                  transform  0.1s ease;
+  width:          100%;
+}
+
+button:hover {
+  background: var(--accent-hover);
+}
+
+button:active {
+  transform: scale(0.97);
+}
+
+button:focus-visible {
+  outline:        3px solid var(--border);
+  outline-offset: 2px;
+}
+
+/* --- Horizontal rule (result separator) ------------------ */
+hr {
+  border:     none;
+  border-top: var(--border-width) solid var(--hr);
+  margin:     1.8rem 0;
+}
+
+/* --- Result blocks: poster + text side by side ----------- */
+/* Each result is a sequence: h2 div, img, p div, then hr.
+   We use a CSS grid on the parent to lay these out as rows
+   of two columns (poster | text). */
+#iz:has(img) {
+  display:               grid;
+  grid-template-columns: 160px 1fr;
+  gap:                   0 1.2rem;
+}
+
+/* The intro block and the "Search Again" button both span
+   the full width when results are present. */
+#iz > div:first-child,
+#iz > button {
+  grid-column: 1 / -1;
+}
+
+/* Film title (h2 wrapper) sits in the text column. */
+#iz > div:has(h2) {
+  grid-column: 2;
+  align-self:  end;
+  padding-top: 0.2rem;
+}
+
+/* Poster image sits in the poster column, spanning the
+   title row and the synopsis row. */
+#iz > img[name="film_poster"] {
+  grid-column:  1;
+  grid-row:     span 2;
+  width:        100%;
+  height:       auto;
+  border-radius: var(--radius);
+  border:       var(--border-width) solid var(--border);
+  object-fit:   cover;
+  align-self:   start;
+}
+
+/* Synopsis paragraph sits in the text column. */
+#iz > div:has(p) {
+  grid-column: 2;
+  align-self:  start;
+}
+
+#iz > div:has(p) p {
+  color:     var(--text-secondary);
+  font-size: 0.95rem;
+}
+
+/* The hr spans both columns to act as a full-width
+   separator between films. */
+#iz > hr {
+  grid-column: 1 / -1;
+}
+
+/* --- Responsive: narrow screens (mobile/tablet) --------- */
+@media (max-width: 520px) {
+  /* Stack poster above text on small screens. */
+  #iz:has(img) {
+    grid-template-columns: 1fr;
+  }
+
+  #iz > div:has(h2),
+  #iz > div:has(p) {
+    grid-column: 1;
+  }
+
+  #iz > img[name="film_poster"] {
+    grid-column: 1;
+    max-width:   220px;
+  }
+
+  /* Labels and sliders stack vertically. */
+  #iz > div:has(input[type="range"]) {
+    flex-direction: column;
+    align-items:    stretch;
+  }
+
+  label {
+    min-width: unset;
+  }
+}
