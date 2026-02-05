@@ -149,11 +149,12 @@ def text(content, name):
     """
     return web.div(from_markdown(content), name=name)
 
-def image(name, image):
+def image(name, image, width='100%', height='auto'):
     """
     Create an image.
     """
-    return web.img(src=image, name=name)
+    style = {"max-width": width, "height": height}
+    return web.img(src=image, name=name, style=style)
 def separator():
     """
     Create a separator.

@@ -5,7 +5,7 @@ import iz
 await iz.setup(globals())
 
 header = iz.text("""Honking in Italy""",name="heading")
-image = iz.image(name="car_image", image="https://www.vivovenetia.com/wp-content/uploads/2018/11/H-Le-Betulle-OSLO-Norway-1024x749.jpg")
+image = iz.image(name="moped_image", image="./assets/moped.jpg", width='50%')
 #plot = iz.plot(name="myPlot", label="Growth", data = [(1,1),(2,2),(3,3)], xLabel = 'time', yLabel = 'value')
 slider1 = iz.slider(name="volume", label="Volume", min=0, max=100)
 slider2 = iz.slider(name="speed", label="Speed", min=0, max=200)
