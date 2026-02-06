@@ -173,6 +173,10 @@ class CEEO_Channel():
         self.reply = ''
         self.callback = None
 
+        self.channel = channel
+        self.user = user
+        self.project = project
+
         self.url = f"wss://{self.user}.pyscriptapps.com/{self.project}/api/channels/{self.channel}"
         self.socket = None
         self._web_socket = None
@@ -180,10 +184,6 @@ class CEEO_Channel():
         self.reconnect_attempts = 0
         self.max_reconnect_attempts = 5
         self.reconnect_delay = 2
-
-        self.channel = channel
-        self.user = user
-        self.project = project
         
     async def onmessage(self, event):
         try:
