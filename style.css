@@ -8,10 +8,7 @@
 
 /* --- Google Fonts import --------------------------------- */
 @import url(
-  'https://fonts.googleapis.com/css2?'
-  'family=Playfair+Display:wght@700;900&'
-  'family=Source+Sans+3:wght@400;600&'
-  'display=swap'
+  'https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Source+Sans+3:wght@400;600&display=swap'
 );
 
 /* --- Design tokens (light mode defaults) ----------------- */
@@ -238,7 +235,8 @@ hr {
 /* The intro block and the "Search Again" button both span
    the full width when results are present. */
 #iz > div:first-child,
-#iz > button {
+#iz > button,
+#iz > div:has(input[type="range"]) {
   grid-column: 1 / -1;
 }
 

@@ -155,6 +155,7 @@ def image(name, image, width='100%', height='auto'):
     """
     style = {"max-width": width, "height": height}
     return web.img(src=image, name=name, style=style)
+
 def separator():
     """
     Create a separator.
