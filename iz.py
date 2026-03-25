@@ -162,6 +162,137 @@ def separator():
     """
     return web.hr(name="foo")
 
+
+####
+
+def dropdown(name, options, label=None):
+    """
+    Create a standard HTML dropdown (<select>).
+    """
+    label = name if label is None else label
+
+    def handle_change(e):
+        #When the dropdown changes, call change_<name>()
+        handler = f"change_{name}"
+        if handler in _APP_GLOBALS:
+            _APP_GLOBALS[handler]()
+
+    class Dropdown(web.Element):
+        def __init__(self, name, options, label):
+            self._name = name
+            self._container = web.div()
+            super().__init__(dom_element=self._container._dom_element)
+
+            self._label = web.label(label, for_=name)
+            self._select = web.select(name=name, id=name)
+
+            # add CSS classes so style.css can control the look
+            self._container.classes.add("dropdown-container")
+            self._label.classes.add("dropdown-label")
+            self._select.classes.add("standard-dropdown")
+
+            for option in options:
+                if isinstance(option, tuple):
+                    option_value, option_text = option
+                else:
+                    option_value, option_text = option, option
+
+                opt = web.option(option_text, value=option_value)
+                self._select.append(opt)
+
+            self._container.append(self._label, self._select)
+            self._select._dom_element.addEventListener(
+                "change", create_proxy(handle_change)
+            )
+
+        @property
+        def name(self):
+            return self._name
+
+        @property
+        def value(self):
+            return self._select.value
+
+    return Dropdown(name, options, label)
+
+
+def navbar(name, items):
+    """
+    Create a navbar with optional dropdown menus.
+
+    items format:
+    [
+        ("Home", "home"),
+        ("Services", [("Web Design", "web"), ("Branding", "branding")]),
+        ("Contact", "contact")
+    ]
+    """
+
+    def make_click_handler(value):
+        def handle_click(e):
+            e.preventDefault()
+            handler = f"select_{name}"
+            if handler in _APP_GLOBALS:
+                _APP_GLOBALS[handler](value)
+        return handle_click
+
+    class Navbar(web.Element):
+        def __init__(self, name, items):
+            self._name = name
+            self._container = web.nav()
+            super().__init__(dom_element=self._container._dom_element)
+
+            self._container.classes.add("navbar")
+
+            top_ul = web.ul()
+            self._container.append(top_ul)
+
+            for item in items:
+                label = item[0]
+                value = item[1]
+
+                li = web.li()
+
+                if isinstance(value, list):
+                    # dropdown parent
+                    li.classes.add("dropdown")
+
+                    parent_link = web.a(label, href="#")
+                    li.append(parent_link)
+
+                    submenu = web.ul()
+                    submenu.classes.add("dropdown-menu")
+
+                    for sublabel, subvalue in value:
+                        sub_li = web.li()
+                        sub_link = web.a(sublabel, href="#")
+                        sub_link._dom_element.addEventListener(
+                            "click",
+                            create_proxy(make_click_handler(subvalue))
+                        )
+                        sub_li.append(sub_link)
+                        submenu.append(sub_li)
+
+                    li.append(submenu)
+
+                else:
+                    # regular navbar item
+                    link = web.a(label, href="#")
+                    link._dom_element.addEventListener(
+                        "click",
+                        create_proxy(make_click_handler(value))
+                    )
+                    li.append(link)
+
+                top_ul.append(li)
+
+        @property
+        def name(self):
+            return self._name
+
+    return Navbar(name, items)
+
+    
 # make sure you have <div id='all_things_channels'></div> on your index.html
 
 from pyscript import WebSocket
@@ -237,3 +368,86 @@ class CEEO_Channel():
         self.socket.close()
         self.reconnect_attempts = self.max_reconnect_attempts
         self.is_connected = False
+
+
+def toggle(name, label="Toggle"):
+    def handle_change(e):
+        handler = f"change_{name}"
+        if handler in _APP_GLOBALS:
+            _APP_GLOBALS[handler]()
+
+    class Toggle(web.Element):
+        def __init__(self, name, label):
+            self._name = name
+            self._input = web.input_(type="checkbox", id=name)
+            self._label = web.label(label, for_=name)
+            container = web.div(self._input, self._label)
+            super().__init__(dom_element=container._dom_element)
+
+            self._input._dom_element.addEventListener(
+                "change", create_proxy(handle_change)
+            )
+
+        @property
+        def name(self):
+            return self._name
+
+        @property
+        def value(self):
+            return self._input.checked
+
+    return Toggle(name, label)
+
+
+def text_input(name, placeholder="Type here..."):
+    def handle_input(e):
+        handler = f"change_{name}"
+        if handler in _APP_GLOBALS:
+            _APP_GLOBALS[handler]()
+
+    class Input(web.Element):
+        def __init__(self, name, placeholder):
+            self._name = name
+            self._input = web.input_(type="text", placeholder=placeholder)
+            super().__init__(dom_element=self._input._dom_element)
+
+            self._input._dom_element.addEventListener(
+                "input", create_proxy(handle_input)
+            )
+
+        @property
+        def name(self):
+            return self._name
+
+        @property
+        def value(self):
+            return self._input.value
+
+    return Input(name, placeholder)
+
+
+def color_picker(name):
+    def handle_change(e):
+        handler = f"change_{name}"
+        if handler in _APP_GLOBALS:
+            _APP_GLOBALS[handler]()
+
+    class Picker(web.Element):
+        def __init__(self, name):
+            self._name = name
+            self._input = web.input_(type="color")
+            super().__init__(dom_element=self._input._dom_element)
+
+            self._input._dom_element.addEventListener(
+                "change", create_proxy(handle_change)
+            )
+
+        @property
+        def name(self):
+            return self._name
+
+        @property
+        def value(self):
+            return self._input.value
+
+    return Picker(name)

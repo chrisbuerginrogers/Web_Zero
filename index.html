@@ -4,12 +4,44 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>iz</title>
+
     <link rel="stylesheet" href="https://pyscript.net/releases/2026.2.1/core.css">
     <script type="module" src="https://pyscript.net/releases/2026.2.1/core.js"></script>
     <link rel="stylesheet" href="./style.css">
   </head>
+
   <body>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+      <ul>
+        <li><a href="#">Home</a></li>
+
+        <li class="dropdown">
+          <a href="#">Services</a>
+          <ul class="dropdown-menu">
+            <li><a href="#">Web Design</a></li>
+            <li><a href="#">Branding</a></li>
+            <li><a href="#">Illustration</a></li>
+          </ul>
+        </li>
+
+        <li><a href="#">Contact</a></li>
+      </ul>
+    </nav>
+
+    <select class="standard-dropdown">
+    <option value="">Services</option>
+    <option value="web">Web Design</option>
+    <option value="branding">Branding</option>
+    <option value="illustration">Illustration</option>
+    </select>
+
+    <!-- PyScript -->
     <script type="mpy" src="./main.py" config="./settings.json"></script>
+
+    <!-- Your existing container -->
     <div id="iz"></div>
+
   </body>
 </html>
