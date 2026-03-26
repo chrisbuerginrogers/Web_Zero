@@ -19,7 +19,7 @@ toggle = iz.toggle(name="mute", label="Mute")
 text = iz.text_input(name="username", placeholder="Enter name")
 color = iz.color_picker(name="bgcolor")
 
-mode = iz.radio_group(
+radio_buttons = iz.radio_group(
     name="mode",
     options=[
         ("eco", "Eco Mode"),
@@ -29,13 +29,11 @@ mode = iz.radio_group(
 )
 status = iz.text("""No mode selected""", name="status")
 
-#dropdown = iz.dropdown(name="drop", font_size=16, width=14, height=10, margin=20)
-
 # The display function draws things on the screen.
 iz.display(
     header,
     image,
-    mode, 
+    radio_buttons, 
     status,
     text,
     sep,
