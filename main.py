@@ -18,14 +18,27 @@ nav = iz.navbar(name="mainnav",items=[("Home", "home"),("Services", [("Web Desig
 toggle = iz.toggle(name="mute", label="Mute")
 text = iz.text_input(name="username", placeholder="Enter name")
 color = iz.color_picker(name="bgcolor")
+
+mode = iz.radio_group(
+    name="mode",
+    options=[
+        ("eco", "Eco Mode"),
+        ("normal", "Normal Mode"),
+        ("sport", "Sport Mode")
+    ]
+)
+status = iz.text("""No mode selected""", name="status")
+
 #dropdown = iz.dropdown(name="drop", font_size=16, width=14, height=10, margin=20)
 
 # The display function draws things on the screen.
 iz.display(
     header,
     image,
-    sep,
+    mode, 
+    status,
     text,
+    sep,
     slider1,
     slider2,
     toggle,
@@ -37,5 +50,14 @@ def press_honk():
     myChannel.post('/honk',True)
 
 
+def change_mode():
+    if mode.value:
+        status._dom_element.innerHTML = f"Mode: {mode.value}"
+    else:
+        status._dom_element.innerHTML = "No mode selected"
+
+
 myChannel = iz.CEEO_Channel(channel="hackathon", user="@chrisrogers", project="talking-on-a-channel")
 myChannel.connect()
+
+

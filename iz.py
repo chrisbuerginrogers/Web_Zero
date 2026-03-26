@@ -451,3 +451,49 @@ def color_picker(name):
             return self._input.value
 
     return Picker(name)
+
+def radio_group(name, options):
+    def handle_change(e):
+        handler = f"change_{name}"
+        if handler in _APP_GLOBALS:
+            _APP_GLOBALS[handler]()
+
+    class RadioGroup(web.Element):
+        def __init__(self, name, options):
+            self._name = name
+            container = web.div()
+            container.classes.add("radio-group")
+
+            super().__init__(dom_element=container._dom_element)
+
+            self._inputs = []
+
+            for value, label in options:
+                inp = web.input_(type="radio", name=name, value=value)
+                lbl = web.label(label)
+
+                inp.classes.add("radio-input")
+                lbl.classes.add("radio-label")
+
+                wrapper = web.div(inp, lbl)
+                wrapper.classes.add("radio-option")
+
+                inp._dom_element.addEventListener(
+                    "change", create_proxy(handle_change)
+                )
+
+                self._inputs.append(inp)
+                container.append(wrapper)
+
+        @property
+        def name(self):
+            return self._name
+
+        @property
+        def value(self):
+            for i in self._inputs:
+                if i.checked:
+                    return i.value
+            return None
+
+    return RadioGroup(name, options)
