@@ -304,3 +304,182 @@ hr {
     min-width: unset;
   }
 }
+
+/* ///////////////////////////// */
+
+/* Navbar styling */
+.navbar ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  background-color: #333;
+}
+
+.navbar li {
+  position: relative;
+}
+
+.navbar a {
+  display: block;
+  padding: 14px 20px;
+  color: white;
+  text-decoration: none;
+}
+
+.navbar a:hover {
+  background-color: #555;
+}
+
+.navbar ul ul {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  min-width: 180px;
+  background: #444;
+  z-index: 9999;
+}
+
+.navbar ul ul li {
+  width: 100%;
+}
+
+.navbar ul ul a {
+  padding: 10px 14px;
+}
+
+.navbar li:hover > ul {
+  display: block;
+}
+
+
+/* dropdown */
+.standard-dropdown {
+  padding: 10px 14px;
+  font-size: 16px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  margin: 20px;
+}
+
+
+.toggle-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 16px 0;
+}
+
+.toggle-label {
+  font-size: 18px;
+  color: #40436b;
+}
+
+.toggle-input {
+  width: 20px;
+  height: 20px;
+}
+
+
+.text-input {
+  width: 260px;
+  padding: 10px 12px;
+  font-size: 16px;
+  border: 2px solid #40436b;
+  border-radius: 8px;
+  margin: 12px 0;
+}
+
+.text-input:focus {
+  outline: none;
+  border-color: #d14b72;
+}
+
+
+.color-picker {
+  width: 60px;
+  height: 40px;
+  border: none;
+  background: none;
+  margin: 12px 0;
+  cursor: pointer;
+}
+
+
+/* RADIO GROUP CONTAINER */
+.radio-group {
+  margin: 16px 0;
+}
+
+/* EACH OPTION */
+.radio-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 8px 0;
+}
+
+/* RADIO BUTTON */
+.radio-input {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+}
+
+/* LABEL */
+.radio-label {
+  font-size: 16px;
+  color: #40436b;
+  cursor: pointer;
+}
+
+.stepper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 16px 0;
+}
+
+.stepper-btn {
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 8px;
+  background: #23233c;
+  color: white;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.stepper-value {
+  min-width: 30px;
+  text-align: center;
+  font-size: 18px;
+  color: #40436b;
+}
+
+.tag-selector {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: 16px 0;
+}
+
+.tag-button {
+  padding: 8px 14px;
+  border: 2px solid #40436b;
+  border-radius: 999px;
+  background: white;
+  color: #40436b;
+  cursor: pointer;
+}
+
+.active-tag {
+  background: #d14b72;
+  color: white;
+  border-color: #d14b72;
+}

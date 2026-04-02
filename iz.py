@@ -162,6 +162,137 @@ def separator():
     """
     return web.hr(name="foo")
 
+
+####
+
+def dropdown(name, options, label=None):
+    """
+    Create a standard HTML dropdown (<select>).
+    """
+    label = name if label is None else label
+
+    def handle_change(e):
+        #When the dropdown changes, call change_<name>()
+        handler = f"change_{name}"
+        if handler in _APP_GLOBALS:
+            _APP_GLOBALS[handler]()
+
+    class Dropdown(web.Element):
+        def __init__(self, name, options, label):
+            self._name = name
+            self._container = web.div()
+            super().__init__(dom_element=self._container._dom_element)
+
+            self._label = web.label(label, for_=name)
+            self._select = web.select(name=name, id=name)
+
+            # add CSS classes so style.css can control the look
+            self._container.classes.add("dropdown-container")
+            self._label.classes.add("dropdown-label")
+            self._select.classes.add("standard-dropdown")
+
+            for option in options:
+                if isinstance(option, tuple):
+                    option_value, option_text = option
+                else:
+                    option_value, option_text = option, option
+
+                opt = web.option(option_text, value=option_value)
+                self._select.append(opt)
+
+            self._container.append(self._label, self._select)
+            self._select._dom_element.addEventListener(
+                "change", create_proxy(handle_change)
+            )
+
+        @property
+        def name(self):
+            return self._name
+
+        @property
+        def value(self):
+            return self._select.value
+
+    return Dropdown(name, options, label)
+
+
+def navbar(name, items):
+    """
+    Create a navbar with optional dropdown menus.
+
+    items format:
+    [
+        ("Home", "home"),
+        ("Services", [("Web Design", "web"), ("Branding", "branding")]),
+        ("Contact", "contact")
+    ]
+    """
+
+    def make_click_handler(value):
+        def handle_click(e):
+            e.preventDefault()
+            handler = f"select_{name}"
+            if handler in _APP_GLOBALS:
+                _APP_GLOBALS[handler](value)
+        return handle_click
+
+    class Navbar(web.Element):
+        def __init__(self, name, items):
+            self._name = name
+            self._container = web.nav()
+            super().__init__(dom_element=self._container._dom_element)
+
+            self._container.classes.add("navbar")
+
+            top_ul = web.ul()
+            self._container.append(top_ul)
+
+            for item in items:
+                label = item[0]
+                value = item[1]
+
+                li = web.li()
+
+                if isinstance(value, list):
+                    # dropdown parent
+                    li.classes.add("dropdown")
+
+                    parent_link = web.a(label, href="#")
+                    li.append(parent_link)
+
+                    submenu = web.ul()
+                    submenu.classes.add("dropdown-menu")
+
+                    for sublabel, subvalue in value:
+                        sub_li = web.li()
+                        sub_link = web.a(sublabel, href="#")
+                        sub_link._dom_element.addEventListener(
+                            "click",
+                            create_proxy(make_click_handler(subvalue))
+                        )
+                        sub_li.append(sub_link)
+                        submenu.append(sub_li)
+
+                    li.append(submenu)
+
+                else:
+                    # regular navbar item
+                    link = web.a(label, href="#")
+                    link._dom_element.addEventListener(
+                        "click",
+                        create_proxy(make_click_handler(value))
+                    )
+                    li.append(link)
+
+                top_ul.append(li)
+
+        @property
+        def name(self):
+            return self._name
+
+    return Navbar(name, items)
+
+    
 # make sure you have <div id='all_things_channels'></div> on your index.html
 
 from pyscript import WebSocket
@@ -237,3 +368,231 @@ class CEEO_Channel():
         self.socket.close()
         self.reconnect_attempts = self.max_reconnect_attempts
         self.is_connected = False
+
+
+def toggle(name, label="Toggle"):
+    def handle_change(e):
+        handler = f"change_{name}"
+        if handler in _APP_GLOBALS:
+            _APP_GLOBALS[handler]()
+
+    class Toggle(web.Element):
+        def __init__(self, name, label):
+            self._name = name
+            self._input = web.input_(type="checkbox", id=name)
+            self._label = web.label(label, for_=name)
+            container = web.div(self._input, self._label)
+            super().__init__(dom_element=container._dom_element)
+
+            self._input._dom_element.addEventListener(
+                "change", create_proxy(handle_change)
+            )
+
+        @property
+        def name(self):
+            return self._name
+
+        @property
+        def value(self):
+            return self._input.checked
+
+    return Toggle(name, label)
+
+
+def text_input(name, placeholder="Type here..."):
+    def handle_input(e):
+        handler = f"change_{name}"
+        if handler in _APP_GLOBALS:
+            _APP_GLOBALS[handler]()
+
+    class Input(web.Element):
+        def __init__(self, name, placeholder):
+            self._name = name
+            self._input = web.input_(type="text", placeholder=placeholder)
+            super().__init__(dom_element=self._input._dom_element)
+
+            self._input._dom_element.addEventListener(
+                "input", create_proxy(handle_input)
+            )
+
+        @property
+        def name(self):
+            return self._name
+
+        @property
+        def value(self):
+            return self._input.value
+
+    return Input(name, placeholder)
+
+
+def color_picker(name):
+    def handle_change(e):
+        handler = f"change_{name}"
+        if handler in _APP_GLOBALS:
+            _APP_GLOBALS[handler]()
+
+    class Picker(web.Element):
+        def __init__(self, name):
+            self._name = name
+            self._input = web.input_(type="color")
+            super().__init__(dom_element=self._input._dom_element)
+
+            self._input._dom_element.addEventListener(
+                "change", create_proxy(handle_change)
+            )
+
+        @property
+        def name(self):
+            return self._name
+
+        @property
+        def value(self):
+            return self._input.value
+
+    return Picker(name)
+
+def radio_group(name, options):
+    def handle_change(e):
+        handler = f"change_{name}"
+        if handler in _APP_GLOBALS:
+            _APP_GLOBALS[handler]()
+
+    class RadioGroup(web.Element):
+        def __init__(self, name, options):
+            self._name = name
+            container = web.div()
+            container.classes.add("radio-group")
+
+            super().__init__(dom_element=container._dom_element)
+
+            self._inputs = []
+
+            for value, label in options:
+                inp = web.input_(type="radio", name=name, value=value)
+                lbl = web.label(label)
+
+                inp.classes.add("radio-input")
+                lbl.classes.add("radio-label")
+
+                wrapper = web.div(inp, lbl)
+                wrapper.classes.add("radio-option")
+
+                inp._dom_element.addEventListener(
+                    "change", create_proxy(handle_change)
+                )
+
+                self._inputs.append(inp)
+                container.append(wrapper)
+
+        @property
+        def name(self):
+            return self._name
+
+        @property
+        def value(self):
+            for i in self._inputs:
+                if i.checked:
+                    return i.value
+            return None
+
+    return RadioGroup(name, options)
+
+
+def stepper(name, value=0, step=1):
+    def change_value(amount):
+        handler = f"change_{name}"
+        if handler in _APP_GLOBALS:
+            _APP_GLOBALS[handler](amount)
+
+    class Stepper(web.Element):
+        def __init__(self, name, value, step):
+            self._name = name
+            self._value = value
+            self._step = step
+
+            self._container = web.div()
+            self._container.classes.add("stepper")
+
+            self._minus = web.button("-", type="button")
+            self._minus.classes.add("stepper-btn")
+
+            self._readout = web.span(str(value))
+            self._readout.classes.add("stepper-value")
+
+            self._plus = web.button("+", type="button")
+            self._plus.classes.add("stepper-btn")
+
+            self._minus._dom_element.addEventListener(
+                "click", create_proxy(lambda e: change_value(-self._step))
+            )
+            self._plus._dom_element.addEventListener(
+                "click", create_proxy(lambda e: change_value(self._step))
+            )
+
+            self._container.append(self._minus, self._readout, self._plus)
+            super().__init__(dom_element=self._container._dom_element)
+
+        @property
+        def name(self):
+            return self._name
+
+        @property
+        def value(self):
+            return self._value
+
+        @value.setter
+        def value(self, new_value):
+            self._value = new_value
+            self._readout._dom_element.innerText = str(new_value)
+
+    return Stepper(name, value, step)
+
+def tag_selector(name, options):
+    def make_click_handler(value):
+        def handle_click(e):
+            handler = f"change_{name}"
+            if handler in _APP_GLOBALS:
+                _APP_GLOBALS[handler](value)
+        return handle_click
+
+    class TagSelector(web.Element):
+        def __init__(self, name, options):
+            self._name = name
+            self._selected = set()
+            self._container = web.div()
+            self._container.classes.add("tag-selector")
+            super().__init__(dom_element=self._container._dom_element)
+
+            self._tags = []
+
+            for label, value in options:
+                tag = web.button(label, type="button")
+                tag.classes.add("tag-button")
+                tag._dom_element.addEventListener(
+                    "click", create_proxy(make_click_handler(value))
+                )
+                self._tags.append((tag, value))
+                self._container.append(tag)
+
+        @property
+        def name(self):
+            return self._name
+
+        @property
+        def value(self):
+            return list(self._selected)
+
+        def toggle_tag(self, tag_value):
+            if tag_value in self._selected:
+                self._selected.remove(tag_value)
+            else:
+                self._selected.add(tag_value)
+
+            for tag, value in self._tags:
+                if value in self._selected:
+                    tag.classes.add("active-tag")
+                else:
+                    tag.classes.discard("active-tag")
+
+    return TagSelector(name, options)

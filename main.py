@@ -11,19 +11,72 @@ slider1 = iz.slider(name="volume", label="Volume", min=0, max=100)
 slider2 = iz.slider(name="speed", label="Speed", min=0, max=200)
 sep = iz.separator()
 go = iz.button(name="honk", label="Honk! 🚗")
+menu = iz.dropdown(name="vehicle", label="Choose vehicle", 
+                   options=[("moped", "Moped"),("car", "Car"),("bike", "Bike")])
+nav = iz.navbar(name="mainnav",items=[("Home", "home"),("Services", [("Web Design", "web"),
+                ("Branding", "branding"),("Illustration", "illustration")]),("Contact", "contact")])
+toggle = iz.toggle(name="mute", label="Mute")
+text = iz.text_input(name="username", placeholder="Enter name")
+color = iz.color_picker(name="bgcolor")
+
+counter = iz.stepper(name="counter", value=5, step=1)
+
+radio_buttons = iz.radio_group(
+    name="mode",
+    options=[
+        ("eco", "Eco Mode"),
+        ("normal", "Normal Mode"),
+        ("sport", "Sport Mode")
+    ]
+)
+status = iz.text("""No mode selected""", name="status")
+
+tags = iz.tag_selector(
+    name="tags",
+    options=[
+        ("Fast", "fast"),
+        ("Loud", "loud"),
+        ("Small", "small")
+    ]
+)
+tag_status = iz.text("""Selected: none""", name="status")
 
 # The display function draws things on the screen.
 iz.display(
     header,
     image,
+    radio_buttons, 
+    status,
+    text,
     sep,
     slider1,
     slider2,
+    toggle,
+    color,
+    counter,
+    tags,
+    tag_status,
     go
     )
 
 def press_honk():
     myChannel.post('/honk',True)
 
+
+def change_mode():
+    if mode.value:
+        status._dom_element.innerHTML = f"Mode: {mode.value}"
+    else:
+        status._dom_element.innerHTML = "No mode selected"
+
+def change_counter(amount):
+    counter.value = counter.value + amount
+
+def change_tags(value):
+    tags.toggle_tag(value)
+    tag_status._dom_element.innerHTML = f"Selected: {tags.value}"
+
 myChannel = iz.CEEO_Channel(channel="hackathon", user="@chrisrogers", project="talking-on-a-channel")
 myChannel.connect()
+
+
