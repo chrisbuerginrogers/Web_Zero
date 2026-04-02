@@ -436,3 +436,50 @@ hr {
   color: #40436b;
   cursor: pointer;
 }
+
+.stepper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 16px 0;
+}
+
+.stepper-btn {
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 8px;
+  background: #23233c;
+  color: white;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.stepper-value {
+  min-width: 30px;
+  text-align: center;
+  font-size: 18px;
+  color: #40436b;
+}
+
+.tag-selector {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: 16px 0;
+}
+
+.tag-button {
+  padding: 8px 14px;
+  border: 2px solid #40436b;
+  border-radius: 999px;
+  background: white;
+  color: #40436b;
+  cursor: pointer;
+}
+
+.active-tag {
+  background: #d14b72;
+  color: white;
+  border-color: #d14b72;
+}

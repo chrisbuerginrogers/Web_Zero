@@ -497,3 +497,102 @@ def radio_group(name, options):
             return None
 
     return RadioGroup(name, options)
+
+
+def stepper(name, value=0, step=1):
+    def change_value(amount):
+        handler = f"change_{name}"
+        if handler in _APP_GLOBALS:
+            _APP_GLOBALS[handler](amount)
+
+    class Stepper(web.Element):
+        def __init__(self, name, value, step):
+            self._name = name
+            self._value = value
+            self._step = step
+
+            self._container = web.div()
+            self._container.classes.add("stepper")
+
+            self._minus = web.button("-", type="button")
+            self._minus.classes.add("stepper-btn")
+
+            self._readout = web.span(str(value))
+            self._readout.classes.add("stepper-value")
+
+            self._plus = web.button("+", type="button")
+            self._plus.classes.add("stepper-btn")
+
+            self._minus._dom_element.addEventListener(
+                "click", create_proxy(lambda e: change_value(-self._step))
+            )
+            self._plus._dom_element.addEventListener(
+                "click", create_proxy(lambda e: change_value(self._step))
+            )
+
+            self._container.append(self._minus, self._readout, self._plus)
+            super().__init__(dom_element=self._container._dom_element)
+
+        @property
+        def name(self):
+            return self._name
+
+        @property
+        def value(self):
+            return self._value
+
+        @value.setter
+        def value(self, new_value):
+            self._value = new_value
+            self._readout._dom_element.innerText = str(new_value)
+
+    return Stepper(name, value, step)
+
+def tag_selector(name, options):
+    def make_click_handler(value):
+        def handle_click(e):
+            handler = f"change_{name}"
+            if handler in _APP_GLOBALS:
+                _APP_GLOBALS[handler](value)
+        return handle_click
+
+    class TagSelector(web.Element):
+        def __init__(self, name, options):
+            self._name = name
+            self._selected = set()
+            self._container = web.div()
+            self._container.classes.add("tag-selector")
+            super().__init__(dom_element=self._container._dom_element)
+
+            self._tags = []
+
+            for label, value in options:
+                tag = web.button(label, type="button")
+                tag.classes.add("tag-button")
+                tag._dom_element.addEventListener(
+                    "click", create_proxy(make_click_handler(value))
+                )
+                self._tags.append((tag, value))
+                self._container.append(tag)
+
+        @property
+        def name(self):
+            return self._name
+
+        @property
+        def value(self):
+            return list(self._selected)
+
+        def toggle_tag(self, tag_value):
+            if tag_value in self._selected:
+                self._selected.remove(tag_value)
+            else:
+                self._selected.add(tag_value)
+
+            for tag, value in self._tags:
+                if value in self._selected:
+                    tag.classes.add("active-tag")
+                else:
+                    tag.classes.discard("active-tag")
+
+    return TagSelector(name, options)

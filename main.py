@@ -19,6 +19,8 @@ toggle = iz.toggle(name="mute", label="Mute")
 text = iz.text_input(name="username", placeholder="Enter name")
 color = iz.color_picker(name="bgcolor")
 
+counter = iz.stepper(name="counter", value=5, step=1)
+
 radio_buttons = iz.radio_group(
     name="mode",
     options=[
@@ -28,6 +30,16 @@ radio_buttons = iz.radio_group(
     ]
 )
 status = iz.text("""No mode selected""", name="status")
+
+tags = iz.tag_selector(
+    name="tags",
+    options=[
+        ("Fast", "fast"),
+        ("Loud", "loud"),
+        ("Small", "small")
+    ]
+)
+tag_status = iz.text("""Selected: none""", name="status")
 
 # The display function draws things on the screen.
 iz.display(
@@ -41,6 +53,9 @@ iz.display(
     slider2,
     toggle,
     color,
+    counter,
+    tags,
+    tag_status,
     go
     )
 
@@ -54,6 +69,12 @@ def change_mode():
     else:
         status._dom_element.innerHTML = "No mode selected"
 
+def change_counter(amount):
+    counter.value = counter.value + amount
+
+def change_tags(value):
+    tags.toggle_tag(value)
+    tag_status._dom_element.innerHTML = f"Selected: {tags.value}"
 
 myChannel = iz.CEEO_Channel(channel="hackathon", user="@chrisrogers", project="talking-on-a-channel")
 myChannel.connect()
